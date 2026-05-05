@@ -185,3 +185,36 @@ This results in a simpler, more stable, and more interpretable energy estimation
 
 Develop a comparison engine to evaluate multiple functions using repeated runs and averaged results
 for more reliable performance and energy analysis.
+
+## Stage 7 — Function Comparison Engine
+
+Implemented a comparison engine to evaluate multiple functions based on CPU time and estimated energy consumption.
+
+### Approach
+
+- Created a reusable measurement function using CPU-time-based profiling
+- Ran each function multiple times to reduce noise
+- Averaged CPU time, wall time, and energy across runs
+- Compared functions based on average energy consumption
+- Returned structured results including a winner
+
+### Observations
+
+- Optimized implementations (e.g., built-in functions) consistently outperform manual Python loops
+- Energy consumption scales proportionally with CPU time
+- Averaging across runs improves stability of results
+
+### Limitation
+
+- Sequential execution may introduce minor bias due to system state changes
+- Results depend on workload type (CPU-bound vs I/O-bound)
+- Does not yet support multi-function ranking beyond pairwise comparison
+
+### Conclusion
+
+The comparison engine transforms the profiler from a measurement tool into a decision-making system,
+allowing direct evaluation of different implementations based on energy efficiency.
+
+### Next Step
+
+Improve output formatting and extend comparison to multiple functions with ranking support.
