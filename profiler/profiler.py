@@ -1,6 +1,5 @@
 import time
 import psutil
-import threading
 
 
 def profile_time(tdp=28):
@@ -8,34 +7,32 @@ def profile_time(tdp=28):
         def wrapper(*args, **kwargs):
             process = psutil.Process()
 
-            cpu_samples = []
-            running = True
-
-            def sample_cpu():
-                while running:
-                    cpu = process.cpu_percent(interval=0.05)
-                    cpu_samples.append(cpu)
-
-            sampler_thread = threading.Thread(target=sample_cpu)
-
-            start_time = time.perf_counter()
-            sampler_thread.start()
+            # CPU time before
+            cpu_before = process.cpu_times().user + process.cpu_times().system
+            wall_start = time.perf_counter()
 
             result = func(*args, **kwargs)
 
-            running = False
-            sampler_thread.join()
-            end_time = time.perf_counter()
+            # CPU time after
+            cpu_after = process.cpu_times().user + process.cpu_times().system
+            wall_end = time.perf_counter()
 
-            execution_time = end_time - start_time
-            avg_cpu = sum(cpu_samples) / len(cpu_samples) if cpu_samples else 0
+            cpu_time = cpu_after - cpu_before
+            wall_time = wall_end - wall_start
 
-            energy = (avg_cpu / 100) * execution_time * tdp
+            # Utilization (for insight, not core model)
+            cpu_util = (cpu_time / wall_time) if wall_time > 0 else 0
+
+            # 🔥 Core energy model
+            energy = cpu_time * tdp
+            
 
             print(f"{func.__name__}:")
-            print(f"  Time: {execution_time:.6f} sec")
-            print(f"  Avg CPU: {avg_cpu:.2f}%")
-            print(f"  Estimated Energy: {energy:.6f} J (TDP={tdp:.2f}W)\n")
+            print(f"  Wall Time: {wall_time:.6f} sec")
+            print(f"  CPU Time: {cpu_time:.6f} sec")
+            print(f"  CPU Utilization : {cpu_util * 100:.2f}%")
+            print(f"  Estimated Energy: {energy:.6f} J (TDP={tdp}W)\n")
+            
 
             return result
 

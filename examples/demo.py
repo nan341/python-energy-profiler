@@ -7,7 +7,7 @@ tdp_eff = calibrate_tdp()
 
 
 # Step 2: use calibrated TDP
-@profile_time(tdp=tdp_eff)
+@profile_time(tdp=28)
 def test_function():
     total = 0
     for i in range(20_000_000):
