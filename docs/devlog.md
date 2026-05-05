@@ -218,3 +218,34 @@ allowing direct evaluation of different implementations based on energy efficien
 ### Next Step
 
 Improve output formatting and extend comparison to multiple functions with ranking support.
+## Stage 8 — Multi-Function Comparison and Ranking
+
+Extended the comparison engine to support evaluation of multiple functions and rank them based on energy efficiency.
+
+### Approach
+
+- Generalized comparison logic to handle a list of functions
+- Executed each function multiple times to reduce measurement noise
+- Averaged CPU time, wall time, and energy across runs
+- Sorted functions based on estimated energy consumption (lowest first)
+
+### Observations
+
+- Built-in and optimized implementations consistently rank higher (lower energy)
+- Python-level loops introduce noticeable overhead affecting both CPU time and energy
+- Even small structural differences (e.g., `for` vs `while`) lead to measurable energy differences
+
+### Limitation
+
+- Functions are executed sequentially, which may introduce minor bias due to system state changes
+- Results depend on workload type (primarily validated on CPU-bound tasks)
+- Does not yet include statistical variance or confidence metrics
+
+### Conclusion
+
+The system now supports scalable comparison across multiple implementations,
+transforming the profiler into a benchmarking tool capable of ranking functions based on energy efficiency.
+
+### Next Step
+
+Introduce a command-line interface (CLI) to make the tool more accessible and usable from the terminal.
