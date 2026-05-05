@@ -249,3 +249,36 @@ transforming the profiler into a benchmarking tool capable of ranking functions 
 ### Next Step
 
 Introduce a command-line interface (CLI) to make the tool more accessible and usable from the terminal.
+
+## Stage 9 — Command Line Interface (CLI)
+
+Introduced a CLI to allow running the profiler directly from the terminal on arbitrary Python files.
+
+### Approach
+
+- Implemented argument parsing using `argparse`
+- Added support for a `compare` command with configurable parameters (`--runs`, `--tdp`)
+- Used `importlib` to dynamically load Python files as modules
+- Extracted user-defined functions using `inspect`
+- Passed extracted functions into the comparison engine for evaluation
+
+### Observations
+
+- CLI enables running the profiler on any file without modifying source code
+- Using `importlib` provides a reliable way to load functions compared to `exec()`
+- Function extraction works consistently across different files
+
+### Limitation
+
+- Currently compares all functions in the file without selective filtering
+- Assumes functions do not require arguments
+- No support yet for exporting results (e.g., JSON)
+
+### Conclusion
+
+The CLI transforms the project from a script into a reusable tool,
+allowing users to benchmark and compare functions directly from the terminal.
+
+### Next Step
+
+Add support for selecting specific functions and exporting results for further analysis.
