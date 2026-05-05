@@ -1,20 +1,19 @@
-from profiler.calibration import calibrate_tdp
-from profiler.profiler import profile_time
+from profiler.comparison import compare_functions
 
 
-# Step 1: calibrate TDP
-tdp_eff = calibrate_tdp()
-
-
-# Step 2: use calibrated TDP
-@profile_time(tdp=28)
-def test_function():
+def func_a():
     total = 0
     for i in range(20_000_000):
         total += i
-    return total
 
 
-print("STARTED\n")
-test_function()
-print("FINISHED")
+def func_b():
+    total = sum(range(20_000_000))
+
+
+result = compare_functions(func_a, func_b, runs=3)
+
+print("\nComparison Result:\n")
+
+for key, value in result.items():
+    print(key, ":", value)
