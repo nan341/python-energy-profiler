@@ -149,3 +149,39 @@ This improves confidence in the energy estimation model rather than significantl
 
 Build a comparison engine to evaluate multiple functions using averaged results
 for more stable and meaningful energy and performance analysis.
+
+## Stage 6 — Transition to CPU-Time-Based Energy Model
+
+Refactored the energy estimation approach to use CPU time directly instead of sampled CPU utilization.
+
+### Approach
+
+- Measured CPU time using `psutil.Process().cpu_times()` (user + system time)
+- Measured wall-clock time using `time.perf_counter()`
+- Removed dependency on sampled CPU percentage and threaded sampling
+- Updated energy model to:
+
+  Energy ≈ CPU Time × TDP
+
+### Observations
+
+- CPU time closely tracks actual computational work performed
+- For CPU-bound workloads, CPU time is nearly equal to wall time (~98–99%)
+- Eliminates noise and variability introduced by periodic CPU sampling
+- Simplifies implementation by removing threading and sampling logic
+
+### Limitation
+
+- Does not explicitly capture multi-core distribution of work
+- Still relies on nominal TDP rather than real-time power measurement
+- Less informative for I/O-bound or idle-heavy workloads
+
+### Conclusion
+
+Using CPU time provides a more direct and principled representation of computational effort.
+This results in a simpler, more stable, and more interpretable energy estimation model compared to sampled CPU usage.
+
+### Next Step
+
+Develop a comparison engine to evaluate multiple functions using repeated runs and averaged results
+for more reliable performance and energy analysis.
