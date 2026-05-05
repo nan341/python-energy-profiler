@@ -79,3 +79,40 @@ compared to snapshot-based measurement.
 
 Use this improved CPU measurement to estimate energy consumption
 using a TDP-based model.
+
+## Stage 4 — Energy Estimation (TDP-based)
+
+Extended the profiler to estimate energy consumption using execution time, CPU usage, and an assumed CPU TDP value.
+
+### Approach
+
+- Used average CPU usage obtained from continuous sampling
+- Measured execution time using `time.perf_counter()`
+- Applied simplified model:
+
+  Energy ≈ CPU × Time × TDP
+
+- Converted CPU percentage to fractional usage before calculation
+
+### Observations
+
+- Estimated energy increases proportionally with execution time
+- CPU-bound workloads produce higher energy values as expected
+- Smaller workloads result in significantly lower energy estimates
+- Results are consistent across repeated runs
+
+### Limitation
+
+- TDP is a theoretical upper bound, not actual power consumption
+- Model does not account for dynamic frequency scaling or system overhead
+- Absolute energy values may be overestimated
+
+### Conclusion
+
+The model provides a consistent and useful approximation of energy consumption,
+suitable for comparing relative computational cost between functions.
+
+### Next Step
+
+Refine the model by introducing calibration or normalization techniques
+to improve realism of energy estimates.

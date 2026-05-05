@@ -3,6 +3,9 @@ import psutil
 import threading
 
 
+TDP = 15  # watts (adjust based on CPU later)
+
+
 def profile_time(func):
     def wrapper(*args, **kwargs):
         process = psutil.Process()
@@ -29,9 +32,13 @@ def profile_time(func):
         execution_time = end_time - start_time
         avg_cpu = sum(cpu_samples) / len(cpu_samples) if cpu_samples else 0
 
+        #  Energy estimation
+        energy = (avg_cpu / 100) * execution_time * TDP
+
         print(f"{func.__name__}:")
         print(f"  Time: {execution_time:.6f} sec")
         print(f"  Avg CPU: {avg_cpu:.2f}%")
+        print(f"  Estimated Energy: {energy:.6f} J")
 
         return result
 
