@@ -58,3 +58,25 @@ def compare_functions(func1, func2, runs=5, tdp=28):
         },
         "winner": winner
     }
+def compare_multiple(functions, runs=5, tdp=28):
+    all_results = []
+
+    for func in functions:
+        run_results = []
+
+        for _ in range(runs):
+            run_results.append(measure_function(func, tdp))
+
+        avg = average_results(run_results)
+
+        all_results.append({
+            "name": func.__name__,
+            "cpu_time": avg["cpu_time"],
+            "wall_time": avg["wall_time"],
+            "energy": avg["energy"]
+        })
+
+    # Sort by energy (lowest = best)
+    ranked = sorted(all_results, key=lambda x: x["energy"])
+
+    return ranked

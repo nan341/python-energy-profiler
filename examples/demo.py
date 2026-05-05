@@ -1,4 +1,4 @@
-from profiler.comparison import compare_functions
+from profiler.comparison import compare_multiple
 
 
 def func_a():
@@ -11,9 +11,18 @@ def func_b():
     total = sum(range(20_000_000))
 
 
-result = compare_functions(func_a, func_b, runs=3)
+def func_c():
+    total = 0
+    i = 0
+    while i < 20_000_000:
+        total += i
+        i += 1
 
-print("\nComparison Result:\n")
 
-for key, value in result.items():
-    print(key, ":", value)
+results = compare_multiple([func_a, func_b, func_c], runs=3)
+
+print("\n=== Ranking ===\n")
+
+for i, r in enumerate(results, start=1):
+    print(f"{i}. {r['name']} → {r['energy']:.6f} J")
+    
