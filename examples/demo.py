@@ -12,7 +12,7 @@ from profiler.profiler import profile_time
 def test_function():
     total = 0
 
-    for i in range(10_000_000):
+    for i in range(50_000_000):
         total += i
 
     return total
