@@ -116,3 +116,36 @@ suitable for comparing relative computational cost between functions.
 
 Refine the model by introducing calibration or normalization techniques
 to improve realism of energy estimates.
+
+## Stage 5 — Empirical TDP Calibration
+
+Introduced an empirical approach to refine the nominal TDP value based on observed system behavior under sustained load.
+
+### Approach
+
+- Started with nominal TDP (28W) based on CPU specifications
+- Designed a CPU-intensive calibration workload to push utilization close to 100%
+- Measured average CPU usage during the calibration run
+- Derived a correction factor and computed an effective TDP value
+
+### Observations
+
+- CPU utilization during calibration reached ~98–99%, indicating a properly CPU-bound workload
+- Calibrated TDP (~27.6W) is very close to nominal value (28W)
+- Results are consistent across runs under similar system conditions
+
+### Limitation
+
+- Calibration does not measure actual hardware power consumption
+- Results depend on workload design and system state (background processes, thermal conditions)
+- Effective TDP represents behavior under high load, not all usage scenarios
+
+### Conclusion
+
+Empirical calibration validates that the system can reach near-nominal TDP under sustained CPU-bound workloads.
+This improves confidence in the energy estimation model rather than significantly altering the base TDP value.
+
+### Next Step
+
+Build a comparison engine to evaluate multiple functions using averaged results
+for more stable and meaningful energy and performance analysis.

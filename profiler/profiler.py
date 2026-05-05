@@ -3,43 +3,41 @@ import psutil
 import threading
 
 
-TDP = 15  # watts (adjust based on CPU later)
+def profile_time(tdp=28):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            process = psutil.Process()
 
+            cpu_samples = []
+            running = True
 
-def profile_time(func):
-    def wrapper(*args, **kwargs):
-        process = psutil.Process()
+            def sample_cpu():
+                while running:
+                    cpu = process.cpu_percent(interval=0.05)
+                    cpu_samples.append(cpu)
 
-        cpu_samples = []
-        running = True
+            sampler_thread = threading.Thread(target=sample_cpu)
 
-        def sample_cpu():
-            while running:
-                cpu = process.cpu_percent(interval=0.05)
-                cpu_samples.append(cpu)
+            start_time = time.perf_counter()
+            sampler_thread.start()
 
-        sampler_thread = threading.Thread(target=sample_cpu)
+            result = func(*args, **kwargs)
 
-        start_time = time.perf_counter()
-        sampler_thread.start()
+            running = False
+            sampler_thread.join()
+            end_time = time.perf_counter()
 
-        result = func(*args, **kwargs)
+            execution_time = end_time - start_time
+            avg_cpu = sum(cpu_samples) / len(cpu_samples) if cpu_samples else 0
 
-        running = False
-        sampler_thread.join()
-        end_time = time.perf_counter()
+            energy = (avg_cpu / 100) * execution_time * tdp
 
-        execution_time = end_time - start_time
-        avg_cpu = sum(cpu_samples) / len(cpu_samples) if cpu_samples else 0
+            print(f"{func.__name__}:")
+            print(f"  Time: {execution_time:.6f} sec")
+            print(f"  Avg CPU: {avg_cpu:.2f}%")
+            print(f"  Estimated Energy: {energy:.6f} J (TDP={tdp:.2f}W)\n")
 
-        #  Energy estimation
-        energy = (avg_cpu / 100) * execution_time * TDP
+            return result
 
-        print(f"{func.__name__}:")
-        print(f"  Time: {execution_time:.6f} sec")
-        print(f"  Avg CPU: {avg_cpu:.2f}%")
-        print(f"  Estimated Energy: {energy:.6f} J")
-
-        return result
-
-    return wrapper
+        return wrapper
+    return decorator
